@@ -38,21 +38,24 @@ _GELU_C = float(np.sqrt(2.0 / np.pi))
 
 def gelu(x: np.ndarray) -> np.ndarray:
     """GELU activation (tanh approximation)."""
-    return 0.5 * x * (1.0 + np.tanh(_GELU_C * (x + 0.044715 * x**3)))
+    return np.asarray(0.5 * x * (1.0 + np.tanh(_GELU_C * (x + 0.044715 * x**3))), dtype=float)
 
 
 def gelu_grad(x: np.ndarray) -> np.ndarray:
     """Derivative of :func:`gelu` with respect to its input ``x``."""
     inner = _GELU_C * (x + 0.044715 * x**3)
     t = np.tanh(inner)
-    return 0.5 * (1.0 + t) + 0.5 * x * (1.0 - t * t) * _GELU_C * (1.0 + 3 * 0.044715 * x**2)
+    return np.asarray(
+        0.5 * (1.0 + t) + 0.5 * x * (1.0 - t * t) * _GELU_C * (1.0 + 3 * 0.044715 * x**2),
+        dtype=float,
+    )
 
 
 def softmax(x: np.ndarray, axis: int = -1) -> np.ndarray:
     """Numerically stable softmax."""
     shifted = x - x.max(axis=axis, keepdims=True)
     e = np.exp(shifted)
-    return e / e.sum(axis=axis, keepdims=True)
+    return np.asarray(e / e.sum(axis=axis, keepdims=True), dtype=float)
 
 
 def _he(fan_in: int, fan_out: int, rng: np.random.Generator) -> np.ndarray:
@@ -113,6 +116,26 @@ class BaseTabularNet:
         self.P: dict[str, np.ndarray] = {}
         self.G: dict[str, np.ndarray] = {}
 
+    # ------------------------------------------------- required interface
+    def forward(
+        self,
+        batch: TokenizedBatch,
+        train: bool = False,
+        priors: list[np.ndarray] | None = None,
+    ) -> ForwardOutput:
+        """Run the network over a tokenized batch; implemented per branch."""
+        raise NotImplementedError
+
+    def backward(
+        self,
+        out: ForwardOutput,
+        d_pred_num: np.ndarray,
+        d_logits_cat: list[np.ndarray],
+        d_target: np.ndarray | None = None,
+    ) -> None:
+        """Accumulate gradients for the last forward pass; per branch."""
+        raise NotImplementedError
+
     # ------------------------------------------------------------ params
     def _add_param(self, name: str, arr: np.ndarray) -> None:
         self.P[name] = arr
@@ -129,12 +152,12 @@ class BaseTabularNet:
 
     # ---------------------------------------------------------- core ops
     def _lin_fwd(self, name: str, x: np.ndarray) -> np.ndarray:
-        return x @ self.P[f"{name}.W"] + self.P[f"{name}.b"]
+        return np.asarray(x @ self.P[f"{name}.W"] + self.P[f"{name}.b"], dtype=float)
 
     def _lin_bwd(self, name: str, x: np.ndarray, dout: np.ndarray) -> np.ndarray:
         self.G[f"{name}.W"] += x.T @ dout
         self.G[f"{name}.b"] += dout.sum(axis=0)
-        return dout @ self.P[f"{name}.W"].T
+        return np.asarray(dout @ self.P[f"{name}.W"].T, dtype=float)
 
     @staticmethod
     def _ln_fwd(x: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -151,10 +174,12 @@ class BaseTabularNet:
         n_feat = xhat.shape[1]
         sum_dy = dy.sum(axis=1, keepdims=True)
         sum_dy_xhat = (dy * xhat).sum(axis=1, keepdims=True)
-        return (inv / n_feat) * (n_feat * dy - sum_dy - xhat * sum_dy_xhat)
+        return np.asarray(
+            (inv / n_feat) * (n_feat * dy - sum_dy - xhat * sum_dy_xhat), dtype=float
+        )
 
     def _emb_fwd(self, j: int, codes: np.ndarray) -> np.ndarray:
-        return self.P[f"emb{j}"][codes]
+        return np.asarray(self.P[f"emb{j}"][codes], dtype=float)
 
     def _emb_bwd(self, j: int, codes: np.ndarray, dout: np.ndarray) -> None:
         np.add.at(self.G[f"emb{j}"], codes, dout)
