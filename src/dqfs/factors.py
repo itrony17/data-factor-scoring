@@ -193,8 +193,9 @@ def uniqueness(df: pd.DataFrame, cfg: DqfsConfig, specs: ColumnSpecs) -> FactorR
         if k in df.columns
     ]
     full_dup = df.duplicated(keep="first")
-    key_dup = df.duplicated(subset=keys or None, keep="first") if keys else None
+    key_dup: pd.Series | None = None
     if keys:
+        key_dup = df.duplicated(subset=keys, keep="first")
         blend = (2.0 * key_dup.astype(float) + full_dup.astype(float)) / 3.0
     else:
         blend = full_dup.astype(float)
