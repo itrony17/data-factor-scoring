@@ -297,7 +297,7 @@ data-factor-scoring/
 │   │   └── importance.py     # IC x deep importance weight blending
 │   ├── report/               # JSON / HTML dashboard / Excel / CSV writers
 │   └── github/publisher.py   # Git-data-API publisher, status, Pages
-├── tests/                    # 75 tests, offline, incl. gradient checks
+├── tests/                    # 108 tests, offline, incl. gradient checks
 ├── dqfs.yaml                 # documented example config
 └── requirements.lock.txt     # pinned, tested dependency set
 ```
