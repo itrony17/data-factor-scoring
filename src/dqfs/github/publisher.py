@@ -170,7 +170,10 @@ class GitHubPublisher:
             f"/repos/{self.repo}/git/refs",
             json={"ref": f"refs/heads/{branch}", "sha": base},
         )
-        logger.info("created branch %s from %s", branch, base[:12])
+        logger.info(
+            "created branch %s from %s", branch, base[:12],
+            extra={"repo": self.repo, "branch": branch},
+        )
         return base
 
     def commit_files(
@@ -288,7 +291,10 @@ class GitHubPublisher:
             )
         sha = self.commit_files(branch, repo_files, commit_message)
         logger.info(
-            "published %d files to %s@%s (%s)", len(repo_files), self.repo, branch, sha[:12]
+            "published %d files to %s@%s (%s)",
+            len(repo_files), self.repo, branch, sha[:12],
+            extra={"repo": self.repo, "branch": branch, "run_id": run_id,
+                   "commit_sha": sha},
         )
 
         pages_updated = False
@@ -301,7 +307,10 @@ class GitHubPublisher:
                     target, pages_target, f"dqfs: pages dashboard {run_id}"
                 )
                 pages_updated = True
-                logger.info("pages updated on %s (%s)", target, pages_sha[:12])
+                logger.info(
+                    "pages updated on %s (%s)", target, pages_sha[:12],
+                    extra={"repo": self.repo, "branch": target, "run_id": run_id},
+                )
 
         status_created = False
         if verdict:

@@ -115,7 +115,10 @@ def run_scoring(
         ScoringError: If the pipeline fails in a non-recoverable way.
     """
     started = time.perf_counter()
-    logger.info("scoring %s (%d rows x %d cols)", source_label, len(df), df.shape[1])
+    logger.info(
+        "scoring %s (%d rows x %d cols)", source_label, len(df), df.shape[1],
+        extra={"dataset": source_label, "rows": int(len(df))},
+    )
     try:
         specs = infer_column_kinds(df)
         factor_results = evaluate_factors(df, cfg, specs)
@@ -140,7 +143,7 @@ def run_scoring(
         # composite DQS: weighted mean of available factor scores, 0-100
         if weights_info:
             dqs = 100.0 * sum(
-                info["weight"] * factor_results[name].score  # type: ignore[index]
+                info["weight"] * factor_results[name].score
                 for name, info in weights_info.items()
             )
         else:
@@ -203,6 +206,13 @@ def run_scoring(
         logger.info(
             "scoring done: DQS %.1f, verdict %s (%.1fs)",
             dqs, verdict, result["duration_seconds"],
+            extra={
+                "run_id": run_id,
+                "dataset": result["dataset"]["name"],
+                "verdict": verdict,
+                "dqs": round(dqs, 2),
+                "duration_seconds": result["duration_seconds"],
+            },
         )
         return ScoreRun(result=result, verdict=verdict, dqs=dqs)
     except ScoringError:

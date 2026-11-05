@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dqfs"
-version = "1.0.0"
+version = "1.1.0"
 description = "DQFS - Data Quality Factor Scoring: a deep-ML CLI pipeline that scores dataset quality factors, applies pass/fail gates and publishes results to GitHub."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,25 +31,70 @@ dependencies = [
     "PyYAML>=6.0",
     "openpyxl>=3.1",
     "requests>=2.28",
+    "python-json-logger>=3.1",
 ]
 
 [project.optional-dependencies]
 postgres = ["psycopg2-binary>=2.9"]
-dev = ["pytest>=7.4", "ruff>=0.4"]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",
+    "mypy>=1.8",
+    "types-requests>=2.31",
+    "pip-audit>=2.7",
+]
 
 [project.scripts]
 dqfs = "dqfs.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/your-org/data-factor-scoring"
-Documentation = "https://github.com/your-org/data-factor-scoring#readme"
+Homepage = "https://github.com/itrony17/data-factor-scoring"
+Documentation = "https://github.com/itrony17/data-factor-scoring#readme"
+Changelog = "https://github.com/itrony17/data-factor-scoring/blob/main/CHANGELOG.md"
+"Contributing" = "https://github.com/itrony17/data-factor-scoring/blob/main/CONTRIBUTING.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q --cov=src/dqfs --cov-report=term-missing --cov-fail-under=85"
+
+[tool.coverage.run]
+source = ["src/dqfs"]
+branch = true
+omit = ["src/dqfs/__main__.py"]
+
+[tool.coverage.report]
+show_missing = true
+precision = 1
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "pragma: no cover",
+]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src/dqfs"]
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+no_site_packages = false
+
+[[tool.mypy.overrides]]
+module = [
+    "pandas.*",
+    "numpy.*",
+    "sqlalchemy.*",
+    "yaml.*",
+    "openpyxl.*",
+    "pythonjsonlogger.*",
+]
+ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 100
