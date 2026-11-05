@@ -40,6 +40,7 @@ ml:
   dropout: 0.15
   corruption_rate: 0.18           # masked-cell rate during denoising
   oof_folds: 5                    # out-of-fold splits for the stacking blender
+  head_epochs: 60                 # epochs for supervised target-head training
 
 # Factor-specific settings
 factors:

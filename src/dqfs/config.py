@@ -49,6 +49,7 @@ _DEFAULTS: dict[str, Any] = {
         "dropout": 0.15,
         "corruption_rate": 0.18,
         "oof_folds": 5,
+        "head_epochs": 60,
     },
     "factors": {
         "timeliness": {"column": None, "fresh_days": 30, "stale_days": 90},
@@ -92,6 +93,7 @@ class MlSettings:
     dropout: float
     corruption_rate: float
     oof_folds: int
+    head_epochs: int
 
 
 @dataclass
