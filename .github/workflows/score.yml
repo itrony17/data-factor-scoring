@@ -1,0 +1,58 @@
+name: Scoring pipeline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"  # weekly quality report
+
+permissions:
+  contents: write
+
+jobs:
+  score:
+    name: score demo dataset + publish artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package (locked dependencies)
+        run: |
+          pip install -r requirements.lock.txt
+          pip install -e . --no-deps
+
+      - name: Generate demo database
+        run: dqfs demo
+
+      - name: Run scoring pipeline
+        run: |
+          dqfs score \
+            --config demo/dqfs-demo.yaml \
+            --dsn sqlite:///demo/quality_demo.db \
+            --table customers \
+            --target churn \
+            --dataset-name customers_demo
+
+      - name: Upload result artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dqfs-results
+          path: results/
+          retention-days: 90
+
+      - name: Publish results to the gh-results branch
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          dqfs publish \
+            --repo "${{ github.repository }}" \
+            --branch gh-results \
+            --status
+        # The commit status "dqfs/quality-gate" appears on the triggering
+        # commit. For a live dashboard also add: --pages --pages-branch main
+        # and enable GitHub Pages from the docs/ folder.
