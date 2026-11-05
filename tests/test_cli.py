@@ -179,7 +179,7 @@ def test_init_and_doctor(tmp_path, capsys) -> None:
 
 
 def test_doctor_detects_bad_source(tmp_path, capsys) -> None:
-    code = main(["doctor", "--dsn", "sqlite:///(bad", "--table", "x"])
+    code = main(["doctor", "--dsn", "notavaliddriver://host/db", "--table", "x"])
     assert code == 1
     assert "[FAIL] data source reachable" in capsys.readouterr().out
 
