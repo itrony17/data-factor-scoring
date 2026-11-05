@@ -53,7 +53,7 @@ git clone https://github.com/itrony17/data-factor-scoring.git
 cd data-factor-scoring
 
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.lock.txt
+pip install -r requirements.txt
 pip install -e ".[dev]"
 
 # 1. generate a demo SQLite database (2.6k rows, realistic corruption)
@@ -257,13 +257,33 @@ keys. Database tests use temporary SQLite files; GitHub publishing is tested
 with mocked HTTP.
 
 ```bash
-pytest -v            # or: make test
+pytest -v            # or: make test - coverage-gated at 85% (current: 91.6%)
 pytest tests/test_network.py -v   # gradient checks only
 ```
 
-CI (`.github/workflows/ci.yml`) runs `ruff check` plus the suite on Python
-3.10/3.11/3.12 on every push and pull request, installing from
-`requirements.lock.txt` so installs are reproducible.
+CI (`.github/workflows/ci.yml`) runs three jobs on every push and pull
+request, installing from the pinned `requirements.txt`:
+
+- **static** - `ruff check` + `mypy` type checking;
+- **test** - the full suite with branch coverage on Python 3.10/3.11/3.12,
+  failing below the 85% coverage floor;
+- **audit** - `pip-audit --strict` against the pinned requirements, failing
+  on any known CVE.
+
+## Security
+
+- **Secrets**: the only credential DQFS reads is `GITHUB_TOKEN`, taken from
+  the environment (see `.env.example`); it is never logged, written to
+  artifacts, or embedded in URLs.
+- **Dependency audit**: every CI run executes `pip-audit --strict`; a known
+  CVE in the pinned set fails the build. Exceptions require a documented
+  rationale in the PR plus a `# nosec`-style comment in the lockfile commit
+  and a linked tracking issue.
+- **Input validation**: identifiers (table/column names) and SQLAlchemy
+  DSNs are validated at the CLI/config boundary with explicit patterns
+  before reaching the SQL or pandas layer.
+- **Reporting**: please disclose vulnerabilities privately via GitHub's
+  *Security -> Report a vulnerability*.
 
 ## Docker
 
@@ -297,9 +317,9 @@ data-factor-scoring/
 │   │   └── importance.py     # IC x deep importance weight blending
 │   ├── report/               # JSON / HTML dashboard / Excel / CSV writers
 │   └── github/publisher.py   # Git-data-API publisher, status, Pages
-├── tests/                    # 108 tests, offline, incl. gradient checks
+├── tests/                    # 132 tests, offline, incl. gradient checks
 ├── dqfs.yaml                 # documented example config
-└── requirements.lock.txt     # pinned, tested dependency set
+└── requirements.txt          # pinned, tested dependency set
 ```
 
 ## Development
