@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import copy
 import logging
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -27,6 +28,35 @@ FACTOR_ORDER: tuple[str, ...] = (
     "timeliness",
     "accuracy",
 )
+
+#: SQL/CSV column identifiers accepted in factor configuration (table and
+#: column names). Conservative on purpose: letters, digits, underscores,
+#: optionally dotted ``schema.table`` qualification, up to 128 chars.
+_IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,127}(?:\.[A-Za-z_][A-Za-z0-9_]{0,127})?$")
+
+#: Numeric literals allowed as the right-hand side of consistency checks.
+_NUMERIC_LITERAL_RE = re.compile(r"-?\d+(?:\.\d+)?")
+
+
+def validate_identifier(name: str, what: str = "identifier") -> str:
+    """Validate a column/table identifier coming from user config.
+
+    Args:
+        name: The identifier string.
+        what: Description used in the error message.
+
+    Returns:
+        The validated identifier (unchanged).
+
+    Raises:
+        ValueError: If the identifier does not match the allowed pattern.
+    """
+    if not isinstance(name, str) or not _IDENTIFIER_RE.match(name):
+        raise ValueError(
+            f"invalid {what}: {name!r} - use letters, digits, underscores "
+            "(optionally 'schema.table'), max 128 characters"
+        )
+    return name
 
 _DEFAULTS: dict[str, Any] = {
     "dataset": {"name": None, "owner": None},
@@ -151,6 +181,38 @@ def _validate(cfg: DqfsConfig) -> None:
     unknown = [f for f in cfg.critical_factors if f not in FACTOR_ORDER]
     if unknown:
         raise ValueError(f"unknown critical factors: {unknown}")
+    _validate_factor_bindings(cfg.factors)
+
+
+def _validate_factor_bindings(factors: dict[str, Any]) -> None:
+    """Check that all configured column references are safe identifiers.
+
+    Every column/table name that reaches the SQL or pandas layer is
+    validated at the config boundary so a hostile YAML cannot smuggle
+    arbitrary expressions into queries or frame operations.
+    """
+    def _check(value: Any, what: str) -> None:
+        validate_identifier(str(value), what)
+
+    timeliness = factors.get("timeliness") or {}
+    if timeliness.get("column"):
+        _check(timeliness["column"], "factors.timeliness.column")
+    for key in (factors.get("uniqueness") or {}).get("key_columns", []):
+        _check(key, "factors.uniqueness.key_columns")
+    for col in (factors.get("consistency") or {}).get("format_columns", []):
+        _check(col, "factors.consistency.format_columns")
+    for check in (factors.get("consistency") or {}).get("checks", []):
+        if isinstance(check, dict):
+            _check(check.get("left"), "factors.consistency.checks[].left")
+            right = check.get("right")
+            # ``right`` may be a literal value (e.g. '18') or a column name;
+            # only numeric literals are exempt from identifier validation.
+            if isinstance(right, str) and right not in FACTOR_ORDER and (
+                not _NUMERIC_LITERAL_RE.fullmatch(right)
+            ):
+                _check(right, "factors.consistency.checks[].right")
+    for column in (factors.get("validity") or {}).get("constraints", {}):
+        _check(column, "factors.validity.constraints[]")
 
 
 def load_config(path: str | Path | None = None) -> DqfsConfig:

@@ -67,9 +67,9 @@ def test_missing_csv_raises(tmp_path) -> None:
 
 
 def test_bad_dsn_raises_clean_error() -> None:
-    # an unknown driver fails at engine creation without touching the
-    # filesystem (a malformed sqlite path would create a stray db file)
-    with pytest.raises(DataLoadError, match="failed to load"):
+    # an unsupported backend is rejected at the validation boundary before
+    # any driver is loaded (a malformed sqlite path would create a stray file)
+    with pytest.raises(DataLoadError, match="unsupported database backend"):
         load_table(dsn="notavaliddriver://host/db", table="t")
 
 

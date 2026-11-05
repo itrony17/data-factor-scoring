@@ -18,7 +18,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine import make_url
 
+from dqfs.config import validate_identifier
 from dqfs.errors import DataLoadError
 
 logger = logging.getLogger(__name__)
@@ -29,6 +31,11 @@ _DATETIME_PARSE_THRESHOLD = 0.8
 
 #: Sample size used for datetime sniffing on object columns.
 _SNIFF_SAMPLE = 200
+
+#: Database backends DQFS knows how to score. Anything else is rejected at
+#: the boundary with a clear message instead of failing deep inside the
+#: driver.
+_ALLOWED_BACKENDS = frozenset({"sqlite", "postgresql", "mysql", "mssql", "duckdb"})
 
 
 @dataclass
@@ -44,6 +51,37 @@ class ColumnSpecs:
     def all_columns(self) -> list[str]:
         """All classified columns in a stable order."""
         return self.numeric + self.categorical + self.datetime + self.text
+
+
+def validate_dsn(dsn: str) -> str:
+    """Validate a SQLAlchemy DSN at the boundary.
+
+    Checks that the URL parses, a driver/backend is present and the backend
+    is one DQFS supports.
+
+    Args:
+        dsn: SQLAlchemy connection string.
+
+    Returns:
+        The validated DSN (unchanged).
+
+    Raises:
+        DataLoadError: If the DSN is unparseable or the backend is not
+            supported.
+    """
+    try:
+        url = make_url(dsn)
+    except Exception as exc:
+        raise DataLoadError(f"invalid DSN {dsn!r}: {exc}") from exc
+    if not dsn or not url.drivername:
+        raise DataLoadError("DSN must include a backend, e.g. sqlite:///path.db")
+    backend = url.get_backend_name()
+    if backend not in _ALLOWED_BACKENDS:
+        raise DataLoadError(
+            f"unsupported database backend {backend!r} - supported: "
+            f"{', '.join(sorted(_ALLOWED_BACKENDS))}"
+        )
+    return dsn
 
 
 def load_table(
@@ -88,13 +126,19 @@ def load_table(
         return df, f"csv:{p}"
 
     engine = None
+    dsn = validate_dsn(dsn or "")
+    if table:
+        try:
+            validate_identifier(table, "table name")
+        except ValueError as exc:
+            raise DataLoadError(str(exc)) from exc
     try:
         engine = create_engine(dsn, pool_pre_ping=True)
         if query:
             df = pd.read_sql(text(query), engine)
             label = f"sql:{_short_dsn(dsn)}"
         else:
-            df = pd.read_sql_table(table, engine)  # type: ignore[arg-type]
+            df = pd.read_sql_table(table, engine)
             label = f"db:{_short_dsn(dsn)}[{table}]"
         logger.info("loaded %d rows x %d cols from %s", len(df), df.shape[1], label)
         return df, label
@@ -123,7 +167,7 @@ def _sniff_datetime(series: pd.Series) -> bool:
     if sample.empty:
         return False
     parsed = pd.to_datetime(sample, errors="coerce", utc=True, format="mixed")
-    return parsed.notna().mean() >= _DATETIME_PARSE_THRESHOLD
+    return bool(parsed.notna().mean() >= _DATETIME_PARSE_THRESHOLD)
 
 
 def infer_column_kinds(df: pd.DataFrame) -> ColumnSpecs:
