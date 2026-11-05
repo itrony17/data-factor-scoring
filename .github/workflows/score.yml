@@ -24,7 +24,7 @@ jobs:
 
       - name: Install package (locked dependencies)
         run: |
-          pip install -r requirements.lock.txt
+          pip install -r requirements.txt
           pip install -e . --no-deps
 
       - name: Generate demo database
