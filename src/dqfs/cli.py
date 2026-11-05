@@ -252,6 +252,27 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     critical = [(n, ok, d) for n, ok, d, c in checks if c]
     info = [(n, ok, d) for n, ok, d, c in checks if not c]
+
+    if getattr(args, "json", False):
+        payload = {
+            "tool": "dqfs",
+            "command": "doctor",
+            "critical_passed": sum(1 for _, ok, _ in critical if ok),
+            "critical_total": len(critical),
+            "healthy": all(ok for _, ok, _ in critical),
+            "checks": [
+                {"name": n, "status": "pass" if ok else "fail", "detail": d,
+                 "critical": True}
+                for n, ok, d in critical
+            ] + [
+                {"name": n, "status": "set" if ok else "unset", "detail": d,
+                 "critical": False}
+                for n, ok, d in info
+            ],
+        }
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+        return 0 if payload["healthy"] else 1
+
     print(f"DQFS doctor - {sum(1 for _, ok, _ in critical if ok)}/{len(critical)} "
           "critical checks passed")
     for name, ok, detail in critical:
@@ -334,6 +355,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_doc.add_argument("--table", help="table to probe")
     p_doc.add_argument("--query", help="query to probe")
     p_doc.add_argument("--csv", help="CSV path to probe")
+    p_doc.add_argument("--json", action="store_true",
+                       help="emit the health report as JSON (for automation)")
     p_doc.set_defaults(func=cmd_doctor)
 
     p_init = sub.add_parser("init", help="write a starter dqfs.yaml")
