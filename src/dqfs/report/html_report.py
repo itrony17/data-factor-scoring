@@ -93,13 +93,10 @@ def _table(headers: list[str], rows: list[list[Any]]) -> str:
 
 
 def _gates_table(gates: list[dict[str, Any]]) -> str:
-    rows = []
-    for g in gates:
-        cls = _STATUS_CLASS.get(g.get("status", "n/a"), "na")
-        rows.append([
-            g.get("name"), f'<span class="chip {cls}">{_esc(g.get("status"))}</span>',
-            g.get("value"), g.get("threshold"),
-        ])
+    rows = [
+        [g.get("name"), g.get("status"), g.get("value"), g.get("threshold")]
+        for g in gates
+    ]
     return _table(["gate", "status", "value", "thresholds"], rows)
 
 
