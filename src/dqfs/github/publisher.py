@@ -50,14 +50,21 @@ class PublishResult:
     dry_run: bool = False
 
 
-def resolve_token(cli_token: str | None = None) -> str:
+def resolve_token(cli_token: str | None = None, required: bool = True) -> str:
     """Resolve the GitHub token from CLI arg or ``GITHUB_TOKEN`` env var.
 
+    Args:
+        cli_token: Explicit token from the command line.
+        required: When False (dry-run mode), return ``""`` instead of
+            raising when no token is configured.
+
     Raises:
-        PublishError: If no token is available, with setup guidance.
+        PublishError: If required and no token is available.
     """
     token = cli_token or os.environ.get("GITHUB_TOKEN", "").strip()
     if not token:
+        if not required:
+            return ""
         raise PublishError(
             "GitHub token not found. Export GITHUB_TOKEN (see .env.example) "
             "or pass --token. A fine-grained token needs Contents: read/write."
