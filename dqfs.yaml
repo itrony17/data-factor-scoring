@@ -1,0 +1,68 @@
+# DQFS example configuration.
+# Run:  dqfs score --dsn sqlite:///demo/quality_demo.db --table customers --config dqfs.yaml
+#
+# Every key is optional - sensible defaults are applied when omitted.
+
+dataset:
+  name: "customers_demo"          # Label used in reports; defaults to table name
+  owner: "data-platform-team"
+
+# Factor thresholds. Each factor score is in [0, 1].
+# A factor >= pass is green, >= warn is amber, below warn is red.
+thresholds:
+  factor_pass: 0.85
+  factor_warn: 0.65
+  composite_pass: 80.0            # Overall DQS (0-100) gate
+  composite_warn: 65.0
+
+# Factors listed here block the overall verdict to FAIL when they score
+# below the warn threshold, even if the composite score passes.
+critical_factors:
+  - completeness
+  - validity
+
+# ML-driven weighting. blend in [0,1]:
+#   1.0 = weights purely from statistics (IC against deep badness signal)
+#   0.0 = weights purely from the deep ensemble's permutation importance
+weights:
+  ic_blend: 0.6                   # weight of IC component vs deep importance
+  min_weight: 0.02                # floor so no factor is fully dropped
+
+# Machine-learning engine
+ml:
+  enabled: true
+  seed: 42
+  epochs: 120                     # denoising pretraining epochs
+  batch_size: 256
+  embedding_dim: 8                # categorical embedding width
+  hidden_dim: 64                  # trunk width for attention + MLP branches
+  attention_steps: 3              # TabNet-style decision steps
+  dropout: 0.15
+  corruption_rate: 0.18           # masked-cell rate during denoising
+  oof_folds: 5                    # out-of-fold splits for the stacking blender
+
+# Factor-specific settings
+factors:
+  timeliness:
+    column: "last_purchase_at"    # timestamp column used for freshness
+    fresh_days: 30                # score 1.0 up to this age
+    stale_days: 90                # score 0.0 at/after this age
+  uniqueness:
+    key_columns: ["id"]           # rows duplicated on these keys count double
+  consistency:
+    # Cross-column logical checks: left op right
+    checks:
+      - { left: "age", op: ">=", right: "18" }
+    format_columns: ["phone", "email"]   # string columns checked for format consistency
+  validity:
+    constraints:
+      age: { min: 0, max: 120 }
+      income: { min: 0 }
+      country: { allowed: ["US", "GB", "DE", "FR", "IN", "CN", "BR", "JP", "AU", "CA"] }
+      email: { regex: "^[^@\\s]+@[^@\\s]+\\.[A-Za-z]{2,}$" }
+
+# GitHub publishing defaults (can be overridden with CLI flags / env vars)
+github:
+  branch: "gh-results"            # branch that receives score reports
+  pages: false                    # true -> also push report to docs/ for GitHub Pages
+  pages_branch: "main"

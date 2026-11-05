@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Environments
+.venv/
+venv/
+.env
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Generated scoring results (committed via `dqfs publish` or CI instead)
+results/
+!results/.gitkeep
+
+# Demo artifacts
+demo/*.db
+*.sqlite
+*.sqlite3
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
