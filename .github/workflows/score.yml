@@ -1,5 +1,9 @@
 name: Scoring pipeline
 
+concurrency:
+  group: scoring-pipeline
+  cancel-in-progress: false
+  
 on:
   push:
     branches: [main]
