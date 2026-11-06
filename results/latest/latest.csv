@@ -1,7 +1,7 @@
 dqs,verdict,factor,score,status,weight,ic,deep_importance
-92.05,WARN,completeness,0.9837,pass,0.1675,-0.0263,0.3979
-92.05,WARN,validity,0.9961,pass,0.1458,0.0693,0.2766
-92.05,WARN,uniqueness,0.9709,pass,0.1045,-0.0077,0.2614
-92.05,WARN,consistency,0.8186,warn,0.3425,0.1302,0.6988
-92.05,WARN,timeliness,0.7992,warn,0.0195,0.034,0.0
-92.05,WARN,accuracy,0.968,pass,0.2201,0.2722,0.1662
+91.56,WARN,completeness,0.9837,pass,0.1637,0.0153,0.3951
+91.56,WARN,validity,0.9961,pass,0.1447,0.0602,0.2792
+91.56,WARN,uniqueness,0.9709,pass,0.1189,0.0191,0.275
+91.56,WARN,consistency,0.8186,warn,0.3748,0.1704,0.7014
+91.56,WARN,timeliness,0.7992,warn,0.0196,0.0191,0.0
+91.56,WARN,accuracy,0.968,pass,0.1782,0.1902,0.1698
