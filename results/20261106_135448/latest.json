@@ -1,0 +1,435 @@
+{
+  "schema_version": 1,
+  "run_id": "20261106_135448",
+  "generated_at": "2026-11-06T13:54:48+00:00",
+  "tool": {
+    "name": "dqfs",
+    "version": "1.1.0"
+  },
+  "dataset": {
+    "name": "customers_demo",
+    "source": "db:sqlite:///demo/quality_demo.db[customers]",
+    "rows": 2575,
+    "columns": 9,
+    "target": "churn"
+  },
+  "dqs": 91.56,
+  "verdict": "WARN",
+  "factors": {
+    "completeness": {
+      "score": 0.9837,
+      "status": "pass",
+      "details": {
+        "missing_cells": 378,
+        "total_cells": 23175,
+        "worst_columns": [
+          {
+            "column": "country",
+            "null_ratio": 0.0738
+          },
+          {
+            "column": "email",
+            "null_ratio": 0.0295
+          },
+          {
+            "column": "income",
+            "null_ratio": 0.0276
+          },
+          {
+            "column": "age",
+            "null_ratio": 0.0159
+          }
+        ]
+      },
+      "weight": 0.1637,
+      "ic": 0.0153,
+      "deep_importance": 0.3951
+    },
+    "validity": {
+      "score": 0.9961,
+      "status": "pass",
+      "details": {
+        "invalid_cells": 89,
+        "evaluable_cells": 22797,
+        "worst_columns": [
+          {
+            "column": "email",
+            "invalid_ratio": 0.0252
+          },
+          {
+            "column": "age",
+            "invalid_ratio": 0.0103
+          }
+        ]
+      },
+      "weight": 0.1447,
+      "ic": 0.0602,
+      "deep_importance": 0.2792
+    },
+    "uniqueness": {
+      "score": 0.9709,
+      "status": "pass",
+      "details": {
+        "duplicate_rows": 75,
+        "duplicate_key_rows": 75,
+        "key_columns": [
+          "id"
+        ]
+      },
+      "weight": 0.1189,
+      "ic": 0.0191,
+      "deep_importance": 0.275
+    },
+    "consistency": {
+      "score": 0.8186,
+      "status": "warn",
+      "details": {
+        "checks_run": 1,
+        "format_columns": [
+          "phone",
+          "email"
+        ],
+        "dominant_patterns": {
+          "phone": "999-9999",
+          "email": "aaaa9999@aaaaaaa.aaa"
+        },
+        "format_mismatch_cells": 1811
+      },
+      "weight": 0.3748,
+      "ic": 0.1704,
+      "deep_importance": 0.7014
+    },
+    "timeliness": {
+      "score": 0.7992,
+      "status": "warn",
+      "details": {
+        "column": "last_purchase_at",
+        "median_age_days": 42.0,
+        "oldest_days": 253.7,
+        "fresh_days": 30.0,
+        "stale_days": 90.0
+      },
+      "weight": 0.0196,
+      "ic": 0.0191,
+      "deep_importance": 0.0
+    },
+    "accuracy": {
+      "score": 0.968,
+      "status": "pass",
+      "details": {
+        "outlier_cells": 326,
+        "evaluable_cells": 10188,
+        "method": "MAD robust z (|z|>3.5, n>=30) / Tukey 3xIQR (n<30)"
+      },
+      "weight": 0.1782,
+      "ic": 0.1902,
+      "deep_importance": 0.1698
+    }
+  },
+  "gates": [
+    {
+      "name": "factor:completeness",
+      "status": "pass",
+      "value": 0.9837,
+      "threshold": ">= 0.65 (warn), >= 0.85 (pass)"
+    },
+    {
+      "name": "factor:validity",
+      "status": "pass",
+      "value": 0.9961,
+      "threshold": ">= 0.65 (warn), >= 0.85 (pass)"
+    },
+    {
+      "name": "factor:uniqueness",
+      "status": "pass",
+      "value": 0.9709,
+      "threshold": ">= 0.65 (warn), >= 0.85 (pass)"
+    },
+    {
+      "name": "factor:consistency",
+      "status": "warn",
+      "value": 0.8186,
+      "threshold": ">= 0.65 (warn), >= 0.85 (pass)"
+    },
+    {
+      "name": "factor:timeliness",
+      "status": "warn",
+      "value": 0.7992,
+      "threshold": ">= 0.65 (warn), >= 0.85 (pass)"
+    },
+    {
+      "name": "factor:accuracy",
+      "status": "pass",
+      "value": 0.968,
+      "threshold": ">= 0.65 (warn), >= 0.85 (pass)"
+    },
+    {
+      "name": "composite_dqs",
+      "status": "pass",
+      "value": 91.56,
+      "threshold": ">= 65.0 (warn), >= 80.0 (pass)"
+    }
+  ],
+  "columns": [
+    {
+      "column": "id",
+      "kind": "numeric",
+      "missing_ratio": 0.0,
+      "invalid_ratio": 0.0,
+      "outlier_ratio": 0.0,
+      "deep_importance": 0.275
+    },
+    {
+      "column": "email",
+      "kind": "categorical",
+      "missing_ratio": 0.0295,
+      "invalid_ratio": 0.0252,
+      "outlier_ratio": null,
+      "deep_importance": 0.9429
+    },
+    {
+      "column": "age",
+      "kind": "numeric",
+      "missing_ratio": 0.0159,
+      "invalid_ratio": 0.0103,
+      "outlier_ratio": 0.0103,
+      "deep_importance": 0.1612
+    },
+    {
+      "column": "income",
+      "kind": "numeric",
+      "missing_ratio": 0.0276,
+      "invalid_ratio": 0.0,
+      "outlier_ratio": 0.1198,
+      "deep_importance": 0.1714
+    },
+    {
+      "column": "country",
+      "kind": "categorical",
+      "missing_ratio": 0.0738,
+      "invalid_ratio": 0.0,
+      "outlier_ratio": null,
+      "deep_importance": 0.1437
+    },
+    {
+      "column": "phone",
+      "kind": "categorical",
+      "missing_ratio": 0.0,
+      "invalid_ratio": 0.0,
+      "outlier_ratio": null,
+      "deep_importance": 1.0
+    },
+    {
+      "column": "signup_date",
+      "kind": "datetime",
+      "missing_ratio": 0.0,
+      "invalid_ratio": 0.0,
+      "outlier_ratio": null,
+      "deep_importance": 0.0
+    },
+    {
+      "column": "last_purchase_at",
+      "kind": "datetime",
+      "missing_ratio": 0.0,
+      "invalid_ratio": 0.0,
+      "outlier_ratio": null,
+      "deep_importance": 0.0
+    },
+    {
+      "column": "churn",
+      "kind": "numeric",
+      "missing_ratio": 0.0,
+      "invalid_ratio": 0.0,
+      "outlier_ratio": 0.0,
+      "deep_importance": 0.0715
+    }
+  ],
+  "worst_rows": [
+    {
+      "row_index": 2446,
+      "badness": 1.0,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.0,
+        "timeliness": 0.427,
+        "accuracy": 0.0
+      }
+    },
+    {
+      "row_index": 2467,
+      "badness": 0.9996,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.0,
+        "timeliness": 0.609,
+        "accuracy": 0.0
+      }
+    },
+    {
+      "row_index": 190,
+      "badness": 0.9992,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.333,
+        "timeliness": 0.324,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 372,
+      "badness": 0.9988,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.667,
+        "timeliness": 0.674,
+        "accuracy": 0.0
+      }
+    },
+    {
+      "row_index": 1786,
+      "badness": 0.9984,
+      "contributions": {
+        "completeness": 0.111,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.0,
+        "timeliness": 0.61,
+        "accuracy": 0.0
+      }
+    },
+    {
+      "row_index": 175,
+      "badness": 0.9981,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.333,
+        "timeliness": 0.533,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 1586,
+      "badness": 0.9977,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.111,
+        "uniqueness": 0.0,
+        "consistency": 0.333,
+        "timeliness": 0.274,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 58,
+      "badness": 0.9973,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.333,
+        "timeliness": 1.0,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 426,
+      "badness": 0.9969,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.333,
+        "timeliness": 0.604,
+        "accuracy": 0.0
+      }
+    },
+    {
+      "row_index": 2200,
+      "badness": 0.9965,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.0,
+        "timeliness": 0.111,
+        "accuracy": 0.25
+      }
+    }
+  ],
+  "model_card": {
+    "enabled": true,
+    "seed": 42,
+    "training_rows": 2575,
+    "scored_rows": 2575,
+    "target": "churn",
+    "target_mode": "binary",
+    "meta_ridge": {
+      "signals": [
+        "attention_branch",
+        "mlp_branch",
+        "attention_target",
+        "mlp_target",
+        "ridge_base"
+      ],
+      "coefficients": [
+        0.5,
+        -0.0017,
+        0.0091,
+        0.0117,
+        0.0422,
+        -0.0081
+      ],
+      "r_squared": 0.0297
+    },
+    "architecture": {
+      "attention_branch": {
+        "type": "TabNet-style attentive transformer",
+        "steps": 3,
+        "hidden": 64,
+        "parameters": 101025
+      },
+      "mlp_branch": {
+        "type": "residual MLP with embeddings",
+        "blocks": 2,
+        "hidden": 64,
+        "parameters": 94157
+      }
+    },
+    "denoising": {
+      "epochs": 120,
+      "corruption_rate": 0.18,
+      "final_loss_attention": 2.4224,
+      "final_loss_mlp": 2.2158
+    },
+    "signals": [
+      "attention_branch",
+      "mlp_branch",
+      "attention_target",
+      "mlp_target",
+      "ridge_base"
+    ],
+    "supervised": true,
+    "runtime_seconds": 94.94
+  },
+  "thresholds": {
+    "factor_pass": 0.85,
+    "factor_warn": 0.65,
+    "composite_pass": 80.0,
+    "composite_warn": 65.0,
+    "critical_factors": [
+      "completeness",
+      "validity"
+    ]
+  },
+  "duration_seconds": 95.03
+}
