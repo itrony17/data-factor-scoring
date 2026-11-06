@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and usage help
+    url: https://github.com/itrony17/data-factor-scoring/discussions
+    about: Ask how to configure factors, gates or publishing before filing an issue.
