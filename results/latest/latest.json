@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "run_id": "20261105_222621",
-  "generated_at": "2026-11-05T22:26:21+00:00",
+  "run_id": "20261106_124155",
+  "generated_at": "2026-11-06T12:41:55+00:00",
   "tool": {
     "name": "dqfs",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "dataset": {
     "name": "customers_demo",
@@ -13,7 +13,7 @@
     "columns": 9,
     "target": "churn"
   },
-  "dqs": 91.56,
+  "dqs": 92.05,
   "verdict": "WARN",
   "factors": {
     "completeness": {
@@ -41,9 +41,9 @@
           }
         ]
       },
-      "weight": 0.1637,
-      "ic": 0.0153,
-      "deep_importance": 0.3951
+      "weight": 0.1675,
+      "ic": -0.0263,
+      "deep_importance": 0.3979
     },
     "validity": {
       "score": 0.9961,
@@ -62,9 +62,9 @@
           }
         ]
       },
-      "weight": 0.1447,
-      "ic": 0.0602,
-      "deep_importance": 0.2792
+      "weight": 0.1458,
+      "ic": 0.0693,
+      "deep_importance": 0.2766
     },
     "uniqueness": {
       "score": 0.9709,
@@ -76,9 +76,9 @@
           "id"
         ]
       },
-      "weight": 0.1189,
-      "ic": 0.0191,
-      "deep_importance": 0.275
+      "weight": 0.1045,
+      "ic": -0.0077,
+      "deep_importance": 0.2614
     },
     "consistency": {
       "score": 0.8186,
@@ -95,9 +95,9 @@
         },
         "format_mismatch_cells": 1811
       },
-      "weight": 0.3748,
-      "ic": 0.1704,
-      "deep_importance": 0.7014
+      "weight": 0.3425,
+      "ic": 0.1302,
+      "deep_importance": 0.6988
     },
     "timeliness": {
       "score": 0.7992,
@@ -109,8 +109,8 @@
         "fresh_days": 30.0,
         "stale_days": 90.0
       },
-      "weight": 0.0196,
-      "ic": 0.0191,
+      "weight": 0.0195,
+      "ic": 0.034,
       "deep_importance": 0.0
     },
     "accuracy": {
@@ -121,9 +121,9 @@
         "evaluable_cells": 10188,
         "method": "MAD robust z (|z|>3.5, n>=30) / Tukey 3xIQR (n<30)"
       },
-      "weight": 0.1782,
-      "ic": 0.1902,
-      "deep_importance": 0.1698
+      "weight": 0.2201,
+      "ic": 0.2722,
+      "deep_importance": 0.1662
     }
   },
   "gates": [
@@ -166,7 +166,7 @@
     {
       "name": "composite_dqs",
       "status": "pass",
-      "value": 91.56,
+      "value": 92.05,
       "threshold": ">= 65.0 (warn), >= 80.0 (pass)"
     }
   ],
@@ -177,7 +177,7 @@
       "missing_ratio": 0.0,
       "invalid_ratio": 0.0,
       "outlier_ratio": 0.0,
-      "deep_importance": 0.275
+      "deep_importance": 0.2614
     },
     {
       "column": "email",
@@ -185,7 +185,7 @@
       "missing_ratio": 0.0295,
       "invalid_ratio": 0.0252,
       "outlier_ratio": null,
-      "deep_importance": 0.9429
+      "deep_importance": 0.9413
     },
     {
       "column": "age",
@@ -193,7 +193,7 @@
       "missing_ratio": 0.0159,
       "invalid_ratio": 0.0103,
       "outlier_ratio": 0.0103,
-      "deep_importance": 0.1612
+      "deep_importance": 0.155
     },
     {
       "column": "income",
@@ -201,7 +201,7 @@
       "missing_ratio": 0.0276,
       "invalid_ratio": 0.0,
       "outlier_ratio": 0.1198,
-      "deep_importance": 0.1714
+      "deep_importance": 0.1749
     },
     {
       "column": "country",
@@ -209,7 +209,7 @@
       "missing_ratio": 0.0738,
       "invalid_ratio": 0.0,
       "outlier_ratio": null,
-      "deep_importance": 0.1437
+      "deep_importance": 0.1792
     },
     {
       "column": "phone",
@@ -241,25 +241,37 @@
       "missing_ratio": 0.0,
       "invalid_ratio": 0.0,
       "outlier_ratio": 0.0,
-      "deep_importance": 0.0715
+      "deep_importance": 0.0736
     }
   ],
   "worst_rows": [
     {
-      "row_index": 2446,
+      "row_index": 485,
       "badness": 1.0,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.111,
+        "uniqueness": 0.0,
+        "consistency": 0.333,
+        "timeliness": 0.149,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 2403,
+      "badness": 0.9996,
       "contributions": {
         "completeness": 0.0,
         "validity": 0.0,
         "uniqueness": 0.0,
         "consistency": 0.0,
-        "timeliness": 0.427,
-        "accuracy": 0.0
+        "timeliness": 0.984,
+        "accuracy": 0.25
       }
     },
     {
       "row_index": 2467,
-      "badness": 0.9996,
+      "badness": 0.9992,
       "contributions": {
         "completeness": 0.0,
         "validity": 0.0,
@@ -270,8 +282,68 @@
       }
     },
     {
+      "row_index": 393,
+      "badness": 0.9988,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.667,
+        "timeliness": 1.0,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 2541,
+      "badness": 0.9984,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 1.0,
+        "consistency": 0.333,
+        "timeliness": 0.496,
+        "accuracy": 0.0
+      }
+    },
+    {
+      "row_index": 2406,
+      "badness": 0.9981,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.0,
+        "timeliness": 0.526,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 2435,
+      "badness": 0.9977,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.0,
+        "timeliness": 0.212,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "row_index": 2446,
+      "badness": 0.9973,
+      "contributions": {
+        "completeness": 0.0,
+        "validity": 0.0,
+        "uniqueness": 0.0,
+        "consistency": 0.0,
+        "timeliness": 0.427,
+        "accuracy": 0.0
+      }
+    },
+    {
       "row_index": 190,
-      "badness": 0.9992,
+      "badness": 0.9969,
       "contributions": {
         "completeness": 0.0,
         "validity": 0.0,
@@ -282,87 +354,15 @@
       }
     },
     {
-      "row_index": 372,
-      "badness": 0.9988,
-      "contributions": {
-        "completeness": 0.0,
-        "validity": 0.0,
-        "uniqueness": 0.0,
-        "consistency": 0.667,
-        "timeliness": 0.674,
-        "accuracy": 0.0
-      }
-    },
-    {
-      "row_index": 1786,
-      "badness": 0.9984,
+      "row_index": 2425,
+      "badness": 0.9965,
       "contributions": {
         "completeness": 0.111,
         "validity": 0.0,
         "uniqueness": 0.0,
         "consistency": 0.0,
-        "timeliness": 0.61,
+        "timeliness": 0.755,
         "accuracy": 0.0
-      }
-    },
-    {
-      "row_index": 175,
-      "badness": 0.9981,
-      "contributions": {
-        "completeness": 0.0,
-        "validity": 0.0,
-        "uniqueness": 0.0,
-        "consistency": 0.333,
-        "timeliness": 0.533,
-        "accuracy": 0.25
-      }
-    },
-    {
-      "row_index": 1586,
-      "badness": 0.9977,
-      "contributions": {
-        "completeness": 0.0,
-        "validity": 0.111,
-        "uniqueness": 0.0,
-        "consistency": 0.333,
-        "timeliness": 0.274,
-        "accuracy": 0.25
-      }
-    },
-    {
-      "row_index": 58,
-      "badness": 0.9973,
-      "contributions": {
-        "completeness": 0.0,
-        "validity": 0.0,
-        "uniqueness": 0.0,
-        "consistency": 0.333,
-        "timeliness": 1.0,
-        "accuracy": 0.25
-      }
-    },
-    {
-      "row_index": 426,
-      "badness": 0.9969,
-      "contributions": {
-        "completeness": 0.0,
-        "validity": 0.0,
-        "uniqueness": 0.0,
-        "consistency": 0.333,
-        "timeliness": 0.604,
-        "accuracy": 0.0
-      }
-    },
-    {
-      "row_index": 2200,
-      "badness": 0.9965,
-      "contributions": {
-        "completeness": 0.0,
-        "validity": 0.0,
-        "uniqueness": 0.0,
-        "consistency": 0.0,
-        "timeliness": 0.111,
-        "accuracy": 0.25
       }
     }
   ],
@@ -383,13 +383,13 @@
       ],
       "coefficients": [
         0.5,
-        -0.0017,
-        0.0091,
-        0.0117,
-        0.0422,
-        -0.0081
+        0.0008,
+        0.0076,
+        0.0115,
+        0.0419,
+        -0.004
       ],
-      "r_squared": 0.0297
+      "r_squared": 0.0292
     },
     "architecture": {
       "attention_branch": {
@@ -408,8 +408,8 @@
     "denoising": {
       "epochs": 120,
       "corruption_rate": 0.18,
-      "final_loss_attention": 2.4224,
-      "final_loss_mlp": 2.2158
+      "final_loss_attention": 2.443,
+      "final_loss_mlp": 2.5065
     },
     "signals": [
       "attention_branch",
@@ -419,7 +419,7 @@
       "ridge_base"
     ],
     "supervised": true,
-    "runtime_seconds": 90.86
+    "runtime_seconds": 97.45
   },
   "thresholds": {
     "factor_pass": 0.85,
@@ -431,5 +431,5 @@
       "validity"
     ]
   },
-  "duration_seconds": 90.95
+  "duration_seconds": 97.51
 }
