@@ -1,0 +1,64 @@
+name: Bug report
+description: Report a problem with dqfs scoring, reporting or publishing.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. Please fill in the details
+        below — the `dqfs doctor --json` output often answers half of these
+        questions automatically.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect to happen instead?
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command and version
+      description: The exact command you ran, plus the output of `dqfs doctor --json`.
+      placeholder: dqfs score --csv data.csv --config dqfs.yaml (dqfs 1.1.0)
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - scoring / factors
+        - ML weights / ensemble
+        - gates / verdict
+        - reports (HTML / Excel / JSON / CSV)
+        - publish / GitHub integration
+        - CLI / config loading
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Smallest dataset and config that triggers the problem.
+      placeholder: |
+        1. `dqfs init --csv sample.csv`
+        2. `dqfs score --csv sample.csv`
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, install method (pip / Docker).
+      placeholder: Windows 11, Python 3.10.11, pip install .
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant log output, ideally from `--log-json`.
+      render: shell
