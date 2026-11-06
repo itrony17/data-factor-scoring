@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "run_id": "20261106_135448",
-  "generated_at": "2026-11-06T13:54:48+00:00",
+  "run_id": "20261106_140649",
+  "generated_at": "2026-11-06T14:06:49+00:00",
   "tool": {
     "name": "dqfs",
     "version": "1.1.0"
@@ -419,7 +419,7 @@
       "ridge_base"
     ],
     "supervised": true,
-    "runtime_seconds": 94.94
+    "runtime_seconds": 92.45
   },
   "thresholds": {
     "factor_pass": 0.85,
@@ -431,5 +431,5 @@
       "validity"
     ]
   },
-  "duration_seconds": 95.03
+  "duration_seconds": 92.54
 }
